@@ -508,8 +508,11 @@ function setupSplashLogo(){
 function hideSplash(){
   const el = document.getElementById('splashScreen');
   if(el && !el.classList.contains('fade-out')){
-    el.classList.add('fade-out');
-    setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 320);
+    // Chờ 5 giây trước khi ẩn splash screen
+    setTimeout(() => {
+      el.classList.add('fade-out');
+      setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 320);
+    }, 5000); // 5000 milliseconds = 5 giây
   }
 }
 
