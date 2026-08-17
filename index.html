@@ -530,11 +530,11 @@ function setupSplashLogo(){
 function hideSplash(){
   const el = document.getElementById('splashScreen');
   if(el && !el.classList.contains('fade-out')){
-    // Chờ 3.5 giây trước khi ẩn splash screen
+    // Chờ 3 giây trước khi ẩn splash screen
     setTimeout(() => {
       el.classList.add('fade-out');
       setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 320);
-    }, 3500); // 3500 milliseconds = 3.5 giây
+    }, 3000); // 3500 milliseconds = 3 giây
   }
 }
 
