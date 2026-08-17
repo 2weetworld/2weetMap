@@ -430,10 +430,12 @@ const firebaseConfig = {
 };
 let db = null;
 let storesRef = null;
+let favoritesRef = null;
 try{
   firebase.initializeApp(firebaseConfig);
   db = firebase.database();
   storesRef = db.ref('stores_data');
+  favoritesRef = db.ref('favorites_data');
 }catch(e){
   console.error('Không tải được Firebase SDK (kiểm tra kết nối mạng / URL script).', e);
 }
@@ -476,15 +478,35 @@ let modalOpenCount = 0;
 
 /* ================= STORAGE (Firebase Realtime Database) ================= */
 function loadFavorites(){
+  // 1) Đọc tạm từ localStorage để hiển thị ngay (không phải chờ mạng)
   try{
     const raw = localStorage.getItem(FAV_KEY);
     favorites = new Set(raw ? JSON.parse(raw) : []);
   }catch(e){ favorites = new Set(); }
+
+  // 2) Đồng bộ real-time với Firebase — đây là nguồn "thật", dùng chung
+  //    cho mọi trình duyệt / thiết bị, khắc phục lỗi mất yêu thích khi đổi nền tảng.
+  if(favoritesRef){
+    favoritesRef.on('value', snap => {
+      const val = snap.val();
+      favorites = new Set(Array.isArray(val) ? val : (val ? Object.values(val) : []));
+      // giữ bản sao local để lần mở sau (kể cả mất mạng) vẫn có dữ liệu tạm
+      try{ localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(favorites))); }catch(e){}
+      updateFavCountLabel();
+      render();
+    }, err => console.error('Lỗi đồng bộ yêu thích', err));
+  }
 }
 
 function persistFavorites(){
+  // Lưu tạm local để phản hồi tức thì
   try{ localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(favorites))); }
-  catch(e){ console.error('Lỗi lưu yêu thích', e); }
+  catch(e){ console.error('Lỗi lưu yêu thích (local)', e); }
+  // Đẩy lên Firebase để mọi trình duyệt/thiết bị khác đọc được cùng danh sách
+  if(favoritesRef){
+    favoritesRef.set(Array.from(favorites))
+      .catch(e => console.error('Lỗi lưu yêu thích lên Firebase', e));
+  }
 }
 
 // Bổ sung hàm ghi/cập nhật 1 tiệm lên Firebase
@@ -508,7 +530,7 @@ function setupSplashLogo(){
 function hideSplash(){
   const el = document.getElementById('splashScreen');
   if(el && !el.classList.contains('fade-out')){
-    // Chờ 5 giây trước khi ẩn splash screen
+    // Chờ 3.5 giây trước khi ẩn splash screen
     setTimeout(() => {
       el.classList.add('fade-out');
       setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 320);
