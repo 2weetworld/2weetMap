@@ -43,7 +43,7 @@
   }
   h1,h2,h3,.display,.brand h1{ font-family:'Hina Mincho',serif; font-weight:400; letter-spacing:0.01em; }
   #app{
-    max-width:480px; margin:0 auto; padding:0 16px; height:100%;
+    max-width:480px; margin:0 auto; padding:0 16px var(--nav-h) 16px; height:100%;
     display:flex; flex-direction:column; overflow:hidden;
   }
   a{ color:inherit; }
@@ -880,8 +880,8 @@ function render(){
     return `
     <div class="card">
       <button type="button" class="fav-heart ${isFav?'active':''}" onclick="toggleFavorite(event,'${s.id}')" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">${HEART_ICON}</button>
-      ${galleryHtml}
       <div class="card-body">
+       ${galleryHtml}
         <div class="card-top">
           <div>
             <h3>${escapeHtml(s.name)}</h3>
