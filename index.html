@@ -278,7 +278,7 @@
   .card-gallery::-webkit-scrollbar{ height:5px; }
   .card-gallery::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
   .card-gallery img{
-    width:118px; height:89px; object-fit:cover; border-radius:14px; flex:none;
+    width:118px; aspect-ratio:1 / 1; height:auto; object-fit:contain; border-radius:14px; flex:none;
     scroll-snap-align:start; background:var(--bg); border:1px solid var(--line);
   }
 
@@ -290,7 +290,7 @@
   .detail-gallery::-webkit-scrollbar{ height:5px; }
   .detail-gallery::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
   .detail-gallery img{
-    width:78vw; max-width:280px; height:210px; object-fit:cover; border-radius:16px; flex:none;
+    width:78vw; max-width:280px; aspect-ratio:1 / 1; height:auto; object-fit:contain; border-radius:16px; flex:none;
     scroll-snap-align:start; background:var(--bg); border:1px solid var(--line);
   }
   .card-body{
