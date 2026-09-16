@@ -257,9 +257,10 @@
   button.distance-line.distance-cta:hover{ text-decoration:underline; }
 
   .card-gallery{
-    display:flex; gap:6px; overflow-x:auto; padding:10px 10px 0; scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch; flex:none;
-  }
+  display:flex; gap:6px; overflow-x:auto; padding:10px 10px 0; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; flex:none;
+  touch-action: pan-y;
+}
   .card-gallery::-webkit-scrollbar{ height:5px; }
   .card-gallery::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
   .card-gallery img{
