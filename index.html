@@ -434,6 +434,7 @@
     .card-top{ padding-right:46px; }
     .field-row{ flex-direction:column; }
   }
+  #directionsOverlay{ z-index:120; }
 </style>
 </head>
 <body>
@@ -923,6 +924,8 @@ function render(){
 
 function openDirections(id){
   const s = stores.find(x=>x.id===id); if(!s) return;
+  const detail = document.getElementById('detailOverlay');
+  if(detail && detail.classList.contains('open')) closeOverlay('detailOverlay');
   const addr = s.address || s.name;
   const hasCoords = s.lat!=null && s.lng!=null;
   const dest = hasCoords ? `${s.lat},${s.lng}` : addr;
