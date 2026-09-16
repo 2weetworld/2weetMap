@@ -30,6 +30,8 @@
     --radius-sm:11px;
     --shadow:0 14px 34px -16px rgba(64,62,59,.28);
     --shadow-sm:0 4px 14px -6px rgba(64,62,59,.18);
+    --nav-h:62px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -39,11 +41,16 @@
     color:var(--ink);
     font-family:'Inter',system-ui,-apple-system,sans-serif;
     -webkit-font-smoothing:antialiased;
-    height:100dvh; height:100vh; overflow:hidden;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+    overscroll-behavior:none;
   }
   h1,h2,h3,.display,.brand h1{ font-family:'Hina Mincho',serif; font-weight:400; letter-spacing:0.01em; }
   #app{
-    max-width:480px; margin:0 auto; padding:0 16px; height:100%;
+    max-width:480px; margin:0 auto;
+    padding:0 16px calc(var(--nav-h) + var(--safe-bottom)) 16px;
+    height:100%;
     display:flex; flex-direction:column; overflow:hidden;
   }
   a{ color:inherit; }
@@ -140,18 +147,18 @@
   /* ---------- Stage (static viewport area: story card + gallery sheet) ---------- */
   .stage{
     position:relative; flex:1; min-height:0; margin:0 -16px;
-    --nav-h:62px; --gallery-open:44vh; --gallery-closed:46px; --gallery-h:var(--gallery-open);
+        --gallery-open:44vh; --gallery-closed:56px; --gallery-h:var(--gallery-open);
   }
   #stage.gallery-closed{ --gallery-h:var(--gallery-closed); }
 
   .story-card{
-    position:absolute; inset:0 0 calc(var(--nav-h) + var(--gallery-h) + 8px) 0;
+    position:absolute; inset:0 0 calc(var(--gallery-h) + 8px) 0;
     border-radius:22px; overflow:hidden; perspective:1400px;
     transition:inset .38s cubic-bezier(.4,0,.2,1);
     box-shadow:var(--shadow-sm);
   }
   #stage.gallery-closed .story-card{
-    inset:10px 16px calc(var(--nav-h) + var(--gallery-h) + 22px) 16px;
+        inset:10px 16px calc(var(--gallery-h) + 22px) 16px;
   }
   .story-flip{
     position:relative; width:100%; height:100%; transform-style:preserve-3d;
@@ -171,16 +178,20 @@
   .story-quote{ font-family:'Hina Mincho',serif; font-size:17px; color:#33421f; max-width:230px; line-height:1.5; }
 
   .gallery-sheet{
-    position:absolute; left:0; right:0; bottom:var(--nav-h); height:var(--gallery-h);
+    position:absolute; left:0; right:0; bottom:0; height:var(--gallery-h);
     background:var(--nav-bg); border-radius:38px 38px 0 0; overflow:hidden;
     transition:height .38s cubic-bezier(.4,0,.2,1); z-index:5;
     display:flex; flex-direction:column; padding:0 16px 14px;
   }
   .gallery-handle-wrap{
-    background:none; border:none; padding:14px 0 10px; margin:0 auto; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; width:100%; flex:none;
+    background:none; border:none; padding:12px 0 8px; margin:0 auto; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:5px; width:100%; flex:none;
   }
-  .gallery-handle{ width:44px; height:5px; border-radius:99px; background:rgba(64,62,59,.35); display:block; }
+  .gallery-handle{ width:52px; height:5px; border-radius:99px; background:rgba(64,62,59,.42); display:block; }
+  .gallery-label{ display:none; font-size:11.5px; font-weight:700; color:var(--ink-soft); }
+  #stage.gallery-closed .gallery-label{ display:block; }
+  #stage.gallery-closed .gallery-sheet{ box-shadow:0 -8px 20px -12px rgba(64,62,59,.45); }
   .result-count{ position:absolute; top:14px; right:20px; font-size:11.5px; color:var(--ink-soft); }
 
   /* ---------- Bakery cards: horizontal scroll ---------- */
@@ -195,7 +206,10 @@
 
   /* ---------- Bottom nav ---------- */
   .bottom-nav{
-    position:fixed; left:0; right:0; bottom:0; height:62px; background:var(--nav-bg);
+    position:fixed; left:0; right:0; bottom:0;
+    height:calc(var(--nav-h) + var(--safe-bottom));
+    padding-bottom:var(--safe-bottom);
+    background:var(--nav-bg);
     display:flex; align-items:center; justify-content:space-around; z-index:40;
     box-shadow:0 -6px 18px -10px rgba(64,62,59,.3);
   }
@@ -257,25 +271,26 @@
   button.distance-line.distance-cta:hover{ text-decoration:underline; }
 
   .card-gallery{
-    display:flex; gap:6px; overflow-x:auto; padding:10px 10px 0;
-    -webkit-overflow-scrolling:touch; flex:none; overscroll-behavior-x:contain; touch-action:pan-x;
-  }
+  display:flex; gap:6px; overflow-x:auto; padding:10px 10px 0; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; flex:none;
+  touch-action: pan-y;
+}
   .card-gallery::-webkit-scrollbar{ height:5px; }
   .card-gallery::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
   .card-gallery img{
-    width:118px; height:118px; object-fit:contain; border-radius:14px; flex:none;
-    background:var(--bg); border:1px solid var(--line);
+    width:118px; height:89px; object-fit:cover; border-radius:14px; flex:none;
+    scroll-snap-align:start; background:var(--bg); border:1px solid var(--line);
   }
 
   /* ---------- Detail overlay: gallery ảnh to hơn, vẫn lướt ngang ---------- */
   .detail-gallery{
     display:flex; gap:10px; overflow-x:auto; padding:2px 2px 8px; margin:14px 0 4px;
-    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
   }
   .detail-gallery::-webkit-scrollbar{ height:5px; }
   .detail-gallery::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
   .detail-gallery img{
-    width:78vw; max-width:280px; height:280px; object-fit:contain; border-radius:16px; flex:none;
+    width:78vw; max-width:280px; height:210px; object-fit:cover; border-radius:16px; flex:none;
     scroll-snap-align:start; background:var(--bg); border:1px solid var(--line);
   }
   .card-body{
@@ -419,6 +434,7 @@
     .card-top{ padding-right:46px; }
     .field-row{ flex-direction:column; }
   }
+  #directionsOverlay{ z-index:120; }
 </style>
 </head>
 <body>
@@ -481,6 +497,7 @@
     <div class="gallery-sheet" id="gallerySheet">
       <button class="gallery-handle-wrap" id="galleryHandle" onclick="toggleGallery()" aria-label="Đóng/mở danh sách tiệm bánh">
         <span class="gallery-handle"></span>
+        <span class="gallery-label">Xem danh sách tiệm ▲</span>
       </button>
       <span class="result-count" id="resultCount"></span>
       <div class="grid" id="grid"></div>
@@ -879,8 +896,8 @@ function render(){
     return `
     <div class="card">
       <button type="button" class="fav-heart ${isFav?'active':''}" onclick="toggleFavorite(event,'${s.id}')" aria-label="Lưu vào yêu thích" title="Lưu vào yêu thích">${HEART_ICON}</button>
-      ${galleryHtml}
       <div class="card-body">
+       ${galleryHtml}
         <div class="card-top">
           <div>
             <h3>${escapeHtml(s.name)}</h3>
@@ -907,6 +924,8 @@ function render(){
 
 function openDirections(id){
   const s = stores.find(x=>x.id===id); if(!s) return;
+  const detail = document.getElementById('detailOverlay');
+  if(detail && detail.classList.contains('open')) closeOverlay('detailOverlay');
   const addr = s.address || s.name;
   const hasCoords = s.lat!=null && s.lng!=null;
   const dest = hasCoords ? `${s.lat},${s.lng}` : addr;
